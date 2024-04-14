@@ -31,7 +31,7 @@ def classify_image(img):
 
 # Main function
 def main():
-    st.title('MNIST Image Classifier')
+    st.title('Number Classifier App')
     st.sidebar.title('Upload Image')
 
     # Allow user to upload an image file
