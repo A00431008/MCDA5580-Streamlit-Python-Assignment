@@ -3,30 +3,39 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Define Base URL and currency
 BASE_URL = 'https://api.coingecko.com/api/v3/coins'
 currency = 'usd'
 
+# Function to Fetch Data
+st.cache_data
 def fetch_data(coin_name):
     url = f"{BASE_URL}/{coin_name}/market_chart"
+    # set parameters
     params = {
             'vs_currency': currency,
             'days': 365
         }
     
     try:
+        # make a request and fetch data as response
         response = requests.get(url, params=params)
         response.raise_for_status()  # Raise an exception for any HTTP error
-        data = response.json()
-        prices = data['prices']
-        timestamps = [entry[0] for entry in prices]
-        prices = [entry[1] for entry in prices]
+        data = response.json() # set data as json
+        prices = data['prices'] # obtain prices from the data 
+        timestamps = [entry[0] for entry in prices] #extract timestamps from prices
+        prices = [entry[1] for entry in prices] # keep only prices in prices
+        
+        # Now form dataframe and return it
         df = pd.DataFrame({'Timestamp': timestamps, 'Price (USD)': prices})
         df['Timestamp'] = pd.to_datetime(df['Timestamp'], unit='ms')
         return df
     except requests.exceptions.RequestException as e:
+        # Throw error if errors in fetching or processing data
         st.error(f"Error fetching data: {e}")
         return None
 
+# Function to plot data
 def plot_data(df):
     fig, ax = plt.subplots()
     ax.plot(df['Timestamp'], df['Price (USD)'], color='blue')
